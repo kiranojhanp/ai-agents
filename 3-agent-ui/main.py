@@ -117,16 +117,13 @@ def prompt_ai(messages, nested_calls=0):
 
 
 def main():
-    st.title("Asana Chatbot")
+    st.title("💬 Asana Chatbot")
+    st.caption(f"🚀 A productivity agent powered by {llm_model}")
 
     if "messages" not in st.session_state:
         st.session_state.messages = [
             SystemMessage(content=system_prompt)
         ]  
-
-    messages = [
-        SystemMessage(content=system_prompt)
-    ]
 
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
@@ -135,7 +132,6 @@ def main():
         if message_type in ["human", "ai", "system"]:
             with st.chat_message(message_type):
                 st.markdown(message_json["content"])  
-
 
     # React to user input
     if prompt := st.chat_input("What would you like to do today?"):
