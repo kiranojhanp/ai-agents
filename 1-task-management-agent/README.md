@@ -1,4 +1,4 @@
-# Project Manager AI with Asana Integration
+# Project Management AI Agent with Asana Integration
 
 ## Overview
 

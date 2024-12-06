@@ -51,9 +51,10 @@ api_client = asana.ApiClient(configuration)
 tasks_api_instance = asana.TasksApi(api_client)
 
 # --------------------------------------------------------------
-# Business logics for AI agent
+# Business logic for AI agent
 # --------------------------------------------------------------
-def create_asana_task(task_name, due_on="today"):
+
+def create_asana_task(task_name: str, due_on: str = "today") -> str:
     """
     Creates a task in Asana with the given name and due date.
 
@@ -64,40 +65,39 @@ def create_asana_task(task_name, due_on="today"):
     Returns:
         str: JSON response from Asana API or an error message.
     """
-
-    if due_on == "today":
-        due_on = str(datetime.now().date())
-    else:
-        try:
-            datetime.strptime(due_on, "%Y-%m-%d")
-        except ValueError:
-            logger.error(f"Invalid date format for due_on: {due_on}")
-            return "Invalid date format for due_on."
-
-    task_body = {
-        "data": {
-            "name": task_name,
-            "due_on": due_on,
-            "projects": [asana_project_id]
-        }
-    }
-
     try:
+        if due_on.lower() == "today":
+            due_on = str(datetime.now().date())
+        else:
+            datetime.strptime(due_on, "%Y-%m-%d")
+
+        task_body = {
+            "data": {
+                "name": task_name,
+                "due_on": due_on,
+                "projects": [asana_project_id]
+            }
+        }
+
         api_response = tasks_api_instance.create_task(task_body, {})
         return json.dumps(api_response, indent=2)
+    except ValueError:
+        logger.error(f"Invalid date format for due_on: {due_on}")
+        return "Invalid date format for due_on."
     except ApiException as e:
-        logger.error(f"An api exception occurred while creating the task: {e}")
+        logger.error(f"API Exception: {e}")
+        return f"API Exception: {e}"
     except Exception as e:
-        logger.error(f"Unknown error occured while creating the task: {e}")
+        logger.error(f"Unknown error: {e}")
+        return f"Unknown error: {e}"
 
-def get_tools():
+def get_tools() -> list:
     """
     Defines the tools available for the AI to use.
 
     Returns:
         list: List of tool descriptions.
     """
-
     tools = [
         {
             "type": "function",
@@ -121,11 +121,9 @@ def get_tools():
             },
         }
     ]
+    return tools
 
-    return tools   
-
-
-def prompt_ai(messages):
+def prompt_ai(messages: list) -> str:
     """
     Prompts the AI with the conversation messages and handles tool calls if necessary.
 
@@ -135,9 +133,7 @@ def prompt_ai(messages):
     Returns:
         str: AI's response content.
     """
-
     try:
-        # First, prompt the AI with the latest user message
         completion = client.chat.completions.create(
             model=openai_model,
             messages=messages,
@@ -147,20 +143,17 @@ def prompt_ai(messages):
         response_message = completion.choices[0].message
         tool_calls = response_message.tool_calls
 
-        # Second, see if the AI decided it needs to invoke a tool
         if tool_calls:
-            # If the AI decided to invoke a tool, invoke it
             available_functions = {
                 "create_asana_task": create_asana_task
             }
 
-            # Add the tool request to the list of messages so the AI knows later it invoked the tool
             messages.append(response_message)
 
-            # Next, for each tool the AI wanted to call, call it and add the tool result to the list of messages
             for tool_call in tool_calls:
                 function_name = tool_call.function.name
                 function_to_call = available_functions[function_name]
+
                 if not function_to_call:
                     logger.warning(f"Function {function_name} not available.")
                     continue
@@ -175,7 +168,6 @@ def prompt_ai(messages):
                     "content": function_response
                 })
 
-            # Call the AI again so it can produce a response with the result of calling the tool(s)
             second_response = client.chat.completions.create(
                 model=openai_model,
                 messages=messages,
@@ -185,15 +177,9 @@ def prompt_ai(messages):
         else:
             return response_message.content
 
-    except openai.APIConnectionError as e:
-        logger.error(f"The server could not be reached: {e.__cause__}")
-    except openai.RateLimitError as e:
-        logger.error(f"A 429 status code was received; we should back off a bit.: {e}")
-    except openai.APIStatusError as e:
-        logger.error(f"Another non-200-range status code was received: {e}")
     except Exception as e:
-        logger.error(f"Unknown error occured: {e}")
-
+        logger.error(f"Unknown error: {e}")
+        return f"Unknown error: {e}"
 
 def main():
     messages = [
@@ -205,22 +191,20 @@ def main():
 
     try:
         while True:
-            user_input = input("Chat with AI (q to quit): ").strip()
-            
-            if user_input == 'q':
-                break  
+            user_input = input("Chat with AI (type 'q' to quit): ").strip()
+            if user_input.lower() == 'q':
+                break
 
             messages.append({"role": "user", "content": user_input})
             ai_response = prompt_ai(messages)
 
-            print(ai_response)
+            print(f"\nAI Response:\n{ai_response}\n")
             messages.append({"role": "assistant", "content": ai_response})
 
     except KeyboardInterrupt:
         logger.info("User requested exit.")
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
-
 
 if __name__ == "__main__":
     main()
