@@ -2,7 +2,7 @@
 
 ## Overview
 
-**This project is an improvement to `1-task-management-agent` as it supports both Anthropic and OpenAI models using langchain package.** This is a AI powered project management agent that integrates with Asana to help users break down their projects into actionable tasks, prioritize them effectively, and create well-structured tickets in Asana. The assistant leverages OpenAI's GPT models to understand user inputs and generate task descriptions, assign priority levels, suggest deadlines, and categorize tasks based on the user's requirements and project objectives. The tasks are then automatically created in the specified Asana project.
+**This project is an improvement to `2-langchain-agent` as it provides an interactive web UI for our agent.** This is a AI powered project management agent that integrates with Asana to help users break down their projects into actionable tasks, prioritize them effectively, and create well-structured tickets in Asana. The assistant leverages OpenAI's GPT models to understand user inputs and generate task descriptions, assign priority levels, suggest deadlines, and categorize tasks based on the user's requirements and project objectives. The tasks are then automatically created in the specified Asana project.
 
 ## Features
 
