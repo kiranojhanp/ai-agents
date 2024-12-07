@@ -134,7 +134,7 @@ def main():
                 st.markdown(message_json["content"])  
 
     # React to user input
-    if prompt := st.chat_input("What would you like to do today?"):
+    if prompt := st.chat_input("What is your next milestone?"):
         # Display user message in chat message container
         st.chat_message("user").markdown(prompt)
         # Add user message to chat history
