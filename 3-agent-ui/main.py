@@ -129,7 +129,7 @@ def main():
     for message in st.session_state.messages:
         message_json = json.loads(message.model_dump_json())
         message_type = message_json["type"]
-        if message_type in ["human", "ai", "system"]:
+        if message_type in ["human", "ai"]:
             with st.chat_message(message_type):
                 st.markdown(message_json["content"])  
 

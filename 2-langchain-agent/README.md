@@ -18,3 +18,11 @@ Before running the code, ensure you have the following:
 - **OpenAI API Key:** Obtain your OpenAI API key by following the instructions here.
 - **Asana Access Token:** Get your Asana personal access token through the Asana developer console by following the instructions here.
 - **Asana Project ID:** Identify the Asana project ID from the URL when you visit a project in the Asana UI. For example, if your URL is https://app.asana.com/0/123456789/1212121212, then your Asana project ID is 123456789.
+- **Just Command Runner:** `just` is a handy way to save and run project-specific commands.
+
+## Running
+
+```bash
+just install
+just start
+```
