@@ -12,9 +12,11 @@ git clone https://github.com/kiranojhanp/ai-agents.git
 
 2. Install Dependencies:
 
+This project uses `just` to run project-specific commands. Each folder contains a `Justfile` with these commands. Install it from [Github](https://github.com/casey/just?tab=readme-ov-file)
+
 ```bash
 cd <folder-name>
-pip install -r requirements.txt
+just install
 ```
 
 3. Set up API Keys:
